@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Excellent Calculator</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .calculator {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 320px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .display {
+      background: #f0f0f0;
+      border-radius: 15px;
+      padding: 15px;
+      font-size: 2rem;
+      text-align: right;
+      overflow-x: auto;
+      height: 60px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 15px;
+      background: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: #d0d0d0;
+      transform: scale(1.05);
+    }
+
+    button.operator {
+      background: #ff7f50;
+      color: white;
+    }
+
+    button.operator:hover {
+      background: #ff6333;
+    }
+
+    button.equals {
+      background: #4caf50;
+      color: white;
+      grid-column: span 2;
+    }
+
+    button.equals:hover {
+      background: #45a049;
+    }
+
+    button.clear {
+      background: #f44336;
+      color: white;
+      grid-column: span 2;
+    }
+
+    button.clear:hover {
+      background: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <div id="display" class="display">0</div>
+  <div class="buttons">
+    <button onclick="clearDisplay()" class="clear">C</button>
+    <button onclick="deleteLast()">⌫</button>
+    <button onclick="appendOperator('/')">÷</button>
+
+    <button onclick="appendNumber('7')">7</button>
+    <button onclick="appendNumber('8')">8</button>
+    <button onclick="appendNumber('9')">9</button>
+    <button onclick="appendOperator('*')">×</button>
+
+    <button onclick="appendNumber('4')">4</button>
+    <button onclick="appendNumber('5')">5</button>
+    <button onclick="appendNumber('6')">6</button>
+    <button onclick="appendOperator('-')">−</button>
+
+    <button onclick="appendNumber('1')">1</button>
+    <button onclick="appendNumber('2')">2</button>
+    <button onclick="appendNumber('3')">3</button>
+    <button onclick="appendOperator('+')">+</button>
+
+    <button onclick="appendNumber('0')">0</button>
+    <button onclick="appendDot()">.</button>
+    <button onclick="calculate()" class="equals">=</button>
+  </div>
+</div>
+
+<script>
+  const display = document.getElementById('display');
+  let currentInput = '0';
+
+  function updateDisplay() {
+    display.textContent = currentInput;
+  }
+
+  function appendNumber(number) {
+    if (currentInput === '0') {
+      currentInput = number;
+    } else {
+      currentInput += number;
+    }
+    updateDisplay();
+  }
+
+  function appendOperator(operator) {
+    if (isOperator(currentInput.slice(-1))) return;
+    currentInput += operator;
+    updateDisplay();
+  }
+
+  function appendDot() {
+    const parts = currentInput.split(/[\+\-\*\/]/);
+    const lastPart = parts[parts.length - 1];
+    if (!lastPart.includes('.')) {
+      currentInput += '.';
+      updateDisplay();
+    }
+  }
+
+  function clearDisplay() {
+    currentInput = '0';
+    updateDisplay();
+  }
+
+  function deleteLast() {
+    if (currentInput.length > 1) {
+      currentInput = currentInput.slice(0, -1);
+    } else {
+      currentInput = '0';
+    }
+    updateDisplay();
+  }
+
+  function calculate() {
+    try {
+      const result = eval(currentInput);
+      currentInput = result.toString();
+      updateDisplay();
+    } catch (e) {
+      currentInput = 'Error';
+      updateDisplay();
+      setTimeout(clearDisplay, 1500);
+    }
+  }
+
+  function isOperator(char) {
+    return ['+', '-', '*', '/'].includes(char);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key >= '0' && e.key <= '9') {
+      appendNumber(e.key);
+    } else if (['+', '-', '*', '/'].includes(e.key)) {
+      appendOperator(e.key);
+    } else if (e.key === 'Enter') {
+      calculate();
+    } else if (e.key === '.') {
+      appendDot();
+    } else if (e.key === 'Backspace') {
+      deleteLast();
+    } else if (e.key === 'Escape') {
+      clearDisplay();
+    }
+  });
+</script>
+
+</body>
+</html>
+
